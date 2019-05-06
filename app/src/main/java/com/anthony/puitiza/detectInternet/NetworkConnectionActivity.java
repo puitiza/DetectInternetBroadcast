@@ -15,15 +15,16 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class NetworkConnectionActivity extends AppCompatActivity {
+public class NetworkConnectionActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
+    TextView connect;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
-
+        connect = findViewById(R.id.connect);
         // Manually checking internet connection
         checkConnection();
         findViewById(R.id.btn_check).setOnClickListener(new View.OnClickListener() {
@@ -33,17 +34,12 @@ public class NetworkConnectionActivity extends AppCompatActivity {
                 checkConnection();
             }
         });
-        scheduleJob();
-    }
-
-    public void changeNetwork(Boolean isConnected){
-        String message = isConnected ? "Good! Connected to Internet" : "Sorry! Not connected to internet";
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+        //scheduleJob();
     }
 
     // Method to manually check connection status
     private void checkConnection() {
-        boolean isConnected = ConnectivityReceiver.isConnected(getApplicationContext());
+        boolean isConnected = ConnectivityReceiver.isConnected();
         showSnack(isConnected);
     }
 
@@ -54,9 +50,11 @@ public class NetworkConnectionActivity extends AppCompatActivity {
         if (isConnected) {
             message = "Good! Connected to Internet";
             color = Color.WHITE;
+            connect.setText("Good! Connected to Internet");
         } else {
             message = "Sorry! Not connected to internet";
             color = Color.RED;
+            connect.setText("Sorry! Not connected to internet");
         }
 
         Snackbar snackbar = Snackbar
@@ -69,21 +67,7 @@ public class NetworkConnectionActivity extends AppCompatActivity {
         snackbar.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private void scheduleJob() {
-        JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
-                .setRequiresCharging(true)
-                .setMinimumLatency(1000)
-                .setOverrideDeadline(2000)
-                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-                .setPersisted(true)
-                .build();
-
-        JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-        jobScheduler.schedule(myJob);
-    }
-
-    @Override
+ /*   @Override
     protected void onStop() {
         // A service can be "started" and/or "bound". In this case, it's "started" by this Activity
         // and "bound" to the JobScheduler (also called "Scheduled" by the JobScheduler). This call
@@ -91,14 +75,27 @@ public class NetworkConnectionActivity extends AppCompatActivity {
         // to call stopService() would keep it alive indefinitely.
         stopService(new Intent(getBaseContext(), NetworkSchedulerService.class));
         super.onStop();
-    }
+    }*/
 
-    @Override
+ /*   @Override
     protected void onStart() {
         super.onStart();
         // Start service and provide it a way to communicate with this class.
         Intent startServiceIntent = new Intent(getBaseContext(), NetworkSchedulerService.class);
 
         startService(startServiceIntent);
+    }*/
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register connection status listener
+        MyApplication.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        showSnack(isConnected);
     }
 }

@@ -9,24 +9,34 @@ import android.net.NetworkInfo;
 public class ConnectivityReceiver extends BroadcastReceiver {
 
 
-    private ConnectivityReceiverListener mConnectivityReceiverListener;
+    public static ConnectivityReceiverListener connectivityReceiverListener;
 
-    ConnectivityReceiver(ConnectivityReceiverListener listener) {
-        mConnectivityReceiverListener = listener;
+
+    public ConnectivityReceiver() {
+        super();
     }
-
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        mConnectivityReceiverListener.onNetworkConnectionChanged(isConnected(context));
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null
+                && activeNetwork.isConnectedOrConnecting();
+
+        if (connectivityReceiverListener != null) {
+            connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
+        }
 
     }
 
-    public static boolean isConnected(Context context) {
-        ConnectivityManager cm = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public static boolean isConnected() {
+        ConnectivityManager
+                cm = (ConnectivityManager) MyApplication.getInstance().getApplicationContext()
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        return activeNetwork != null
+                && activeNetwork.isConnectedOrConnecting();
     }
 
     public interface ConnectivityReceiverListener {
