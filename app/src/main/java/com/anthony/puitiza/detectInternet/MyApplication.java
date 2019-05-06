@@ -1,12 +1,9 @@
 package com.anthony.puitiza.detectInternet;
 
-import android.app.Activity;
 import android.app.Application;
-import android.os.Bundle;
 
 public class MyApplication extends Application {
 
-    private static boolean isInterestingActivityVisible;
     private static MyApplication mInstance;
 
 

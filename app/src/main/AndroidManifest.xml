@@ -3,15 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.anthony.puitiza.detectInternet">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- Always required on api < 21, needed to keep a wake lock while your job is running -->
-    <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!-- Required on api < 21 if you are using setRequiredNetworkType(int) -->
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- Required on all api levels if you are using setPersisted(true) -->
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MyApplication"
@@ -35,6 +28,7 @@
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </receiver>
     </application>

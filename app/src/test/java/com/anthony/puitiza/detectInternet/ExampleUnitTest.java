@@ -2,7 +2,7 @@ package com.anthony.puitiza.detectInternet;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Example local unit MyListener, which will execute on the development machine (host).
